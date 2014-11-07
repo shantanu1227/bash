@@ -1,7 +1,9 @@
 import java.util.*;
 import java.io.*;
+import java.net.*;
 
 /*Copyright 2014 Shantanu Jain
+ *Copyright 2014 Samir Aly: showHistory() and listPorts() operations
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -18,6 +20,7 @@ limitations under the License.*/
 
 public class Bash{
 	static String pwd = "";
+	static List<String> history = new ArrayList<String>();
 	public static void main(String[] args){
 	
 	pwd = System.getProperty("user.dir");
@@ -26,6 +29,7 @@ public class Bash{
 	System.out.print(pwd+" ~  ");
 		String[] input = sc.nextLine().trim().split(" ");
 		String cmd = input[0].trim();
+		history.add(cmd); // add command to history list
 		if(cmd.equals("pwd"))
 			pwdfunction(pwd);
 		else if(cmd.equals( "ls")){
@@ -51,6 +55,10 @@ public class Bash{
 			}else{
 				System.out.println("Second Argument Required");
 			}
+		}else if(cmd.equals("history")){
+			showHistory();
+		}else if(cmd.equals("netstat")){
+			listPorts();
 		}else if(cmd.equals("exit")){
 			System.exit(0);
 		}else{
@@ -127,5 +135,27 @@ public class Bash{
 		if(!found){
 			System.out.println("Not found: "+find);	
 		}
+	}
+	
+	private static void showHistory(){
+		for (int x=1;x<history.size();x++){ 
+			System.out.println(x + "\t"+history.get(x-1));
+		}
+	}
+	
+	private static void listPorts(){
+		int count=0;
+		System.out.println("Scanning for open ports...");
+		for (int x=0;x<10000;x++){
+				
+			try{
+				Socket s = new Socket("127.0.0.1",x);
+				System.out.println(x);
+				++count;
+			}
+			catch(Exception e){ }
+		}
+		if (count==0){ System.out.println("No ports found. Check your firewall settings."); }
+		else{ System.out.println("Found "+ count+" open ports."); }
 	}
 }
